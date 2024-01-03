@@ -10,7 +10,7 @@
 #include "lpc17xx.h"
 #include "RIT.h"
 #include "../GLCD/GLCD.h" 
-#include "../game.h"
+#include "../game/game.h"
 #include "../Joystick/joystick.h"
 
 

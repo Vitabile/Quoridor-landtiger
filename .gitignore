@@ -3,3 +3,11 @@
 *.crf
 *.htm
 *.scvd
+*.dep
+*.axf
+*.David
+*.uvoptx
+*.lst
+*.map
+*.lnp
+*.sct

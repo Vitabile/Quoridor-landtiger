@@ -23,6 +23,7 @@
 #include "GLCD.h" 
 #include "AsciiLib.h"
 #include <stdio.h>
+#include "../game/game.h"
 
 /* Private variables ---------------------------------------------------------*/
 static uint8_t LCD_Code;
@@ -778,7 +779,7 @@ void LCD_Num_Walls(char num_walls_1, char num_walls_2){
 	GUI_Text(198, 292, (uint8_t *) w2_in_char, BOARD,BACKGROUND);
 }
 
-#include "../game.h"
+
 void LCD_Possible_Shifts(char choice, volatile PossibleShifts ps, char x, char y,char x2, char y2, char key){
 	if (ps.up){
 		// top

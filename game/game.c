@@ -1,7 +1,7 @@
 #include <stdio.h>
-#include "GLCD/GLCD.h"
-#include "timer/timer.h"
-#include "RIT/RIT.h"
+#include "../GLCD/GLCD.h"
+#include "../timer/timer.h"
+#include "../RIT/RIT.h"
 
 extern char game_mode;
 

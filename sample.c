@@ -27,7 +27,7 @@
 #include "button_EXINT/button.h"
 #include "Joystick/joystick.h"
 #include "GLCD/GLCD.h" 
-#include "game.h"
+#include "game/game.h"
 
 /* for simulator */
 #define SIMULATOR 1
