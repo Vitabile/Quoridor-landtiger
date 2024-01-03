@@ -23,16 +23,16 @@ On their turn, a player has two choices:
 <p align="center">
     <img src="images/double_shifts.png" width="360" height="auto">
 
-* He/she can choose to place a wall. The wall cannot be jumped over but must be navigated around.
+* He/she can choose to place a wall. The wall cannot be jumped over but must be navigated around (the chosen wall is shown in green if it is in a valid position).
 <p align="center">
     <img src="images/possible_wall.png" width="360" height="auto">
 
 
-* It is not allowed to "trap" a player with the help of walls; you must always leave them a way to reach the goal. In this case the wall are red and a message appear.
+* It is not allowed to "trap" a player with the help of walls; you must always leave them a way to reach the goal (the wall is shown red and a warning message appear).
 <p align="center">
     <img src="images/trap.png" width="360" height="auto"> <br>
 
-* Moreover, the walls cannot overlap, this case is showed in red. 
+* Moreover, the walls cannot be overlapped (the wall is showed in red). 
 <p align="center">
     <img src="images/not_valid_wall.png" width="360" height="auto">
 
