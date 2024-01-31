@@ -23,7 +23,7 @@
 #include "GLCD.h" 
 #include "AsciiLib.h"
 #include <stdio.h>
-#include "../game/game.h"
+#include "../game.h"
 
 /* Private variables ---------------------------------------------------------*/
 static uint8_t LCD_Code;
@@ -280,7 +280,7 @@ static void LCD_SetCursor(uint16_t Xpos,uint16_t Ypos)
 * Return         : None
 * Attention		 : None
 *******************************************************************************/
-static void delay_ms(uint16_t ms)    
+void delay_ms(uint16_t ms)    
 { 
 	uint16_t i,j; 
 	for( i = 0; i < ms; i++ )
@@ -672,6 +672,18 @@ void GUI_Text(uint16_t Xpos, uint16_t Ypos, uint8_t *str,uint16_t Color, uint16_
 
 /* MY IMPLEMENTATION FOR THE GAME */
 
+/*************************************************************************
+* Function Name  : LCD_DrawSquare
+* Description    : Draw a square in the lcd
+* Input          : - x0: xpos of the first square vertex
+									 - y0: ypos of the first square vertex
+									 - x1: xpos of the second square vertex
+									 - y1: ypos of the second square vertex
+									 - color: the color of the board
+* Output         : None
+* Return         : None
+* Attention		 : None
+*************************************************************************/
 
 void LCD_DrawSquare(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1 , uint16_t color ){
 	
@@ -683,19 +695,59 @@ void LCD_DrawSquare(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1 , uint16_
 	LCD_DrawLine(x0,y1,x1,y1,color);
 	LCD_DrawLine(x1,y0,x1,y1,color);
 }
+/*************************************************************************
+* Function Name  : LCD_Board
+* Description    : Draw the 7x7 board
+* Input          : - color: the color of the board
+* Output         : None
+* Return         : None
+* Attention		 : None
+*************************************************************************/
 
-void LCD_Board(uint16_t color){
+void LCD_Board(){
 	int r;
 	int c;
 	for (r = 0; r<7; ++r){
 		for (c = 0; c<7; ++c) {
-			LCD_DrawSquare(30*c+5*c,30*r+5*r,(30*(c+1)+5*c),30*(r+1)+5*r,color);
+			LCD_DrawSquare(30*c+5*c,30*r+5*r,(30*(c+1)+5*c),30*(r+1)+5*r,BOARD);
 		}
 	}
-	LCD_DrawSquare(5, 270, 75, 310, color);
-	LCD_DrawSquare(85, 270, 155, 310, color);
-	LCD_DrawSquare(165, 270, 235, 310, color);
+	LCD_DrawSquare(5, 270, 75, 310, TOKEN_1);
+	LCD_DrawSquare(80, 270, 160, 310, BOARD);
+	GUI_Text(84, 275, (uint8_t *) "Time Left", BOARD,BACKGROUND);
+	LCD_DrawSquare(165, 270, 235, 310, TOKEN_2);
 }
+
+/*************************************************************************
+* Function Name  : LCD_Fill
+* Description    : Fill a part of the lcd 
+* Input          : - x0: xpos of the first vertex
+									 - y0: ypos of the first vertex
+									 - x1: xpos of the second vertex
+									 - y1: ypos of the second vertex
+									 - color: the color to fill
+* Output         : None
+* Return         : None
+* Attention		 : None
+*************************************************************************/
+
+void LCD_Fill(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1 , uint16_t color ){
+	int i;
+	for (i = x0; i <= x1; ++i){
+		LCD_DrawLine(i,y0,i,y1,color);
+	}
+}
+
+/*************************************************************************
+* Function Name  : LCD_Token
+* Description    : Draw the token player in the lcd
+* Input          : - x: xpos (index in the matrix [0,6]
+									 - y: ypos (index in the matrix [0,6]
+									 - key: it is a value to understand the state of the token 
+* Output         : None
+* Return         : None
+* Attention		 : None
+*************************************************************************/
 
 void LCD_Token(uint16_t x, uint16_t y, char key){
 	uint16_t x1;
@@ -720,6 +772,35 @@ void LCD_Token(uint16_t x, uint16_t y, char key){
 	}
 	LCD_Fill(1+(30*x+5*x),1+(30*y+5*y),x1,(30*(y+1)+5*y)-1,color);
 }
+
+/*************************************************************************
+* Function Name  : LCD_Init_Board
+* Description    : Init the board for a game
+* Input          : - players_pos: the positions of the two players
+* Output         : None
+* Return         : None
+* Attention		 : None
+*************************************************************************/
+
+void LCD_Init_Board(volatile char players_pos[2][2]){
+	LCD_Clear(BACKGROUND);
+	LCD_Board();
+	LCD_Token(players_pos[0][0],players_pos[0][1],0);
+	LCD_Token(players_pos[1][0],players_pos[1][1],1);
+}
+
+
+/*************************************************************************
+* Function Name  : LCD_DrawWall
+* Description    : Draw the wall in the lcd
+* Input          : - x: xpos (index in the centers matrix of walls [0,5]
+									 - y: ypos (index in the centers matrix of walls [0,5]
+                   - orientation: flag for the orietation of the wall
+									 - key: it is a value to understand the state of the token 
+* Output         : None
+* Return         : None
+* Attention		 : None
+*************************************************************************/
 
 void LCD_DrawWall(uint16_t x, uint16_t y, char orientation,char key){
 	uint16_t x0;
@@ -754,31 +835,42 @@ void LCD_DrawWall(uint16_t x, uint16_t y, char orientation,char key){
 	LCD_Fill(x0,y0,x1,y1,color);
 }
 
-void LCD_Fill(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1 , uint16_t color ){
-	int i;
-	for (i = x0; i <= x1; ++i){
-		LCD_DrawLine(i,y0,i,y1,color);
-	}
-}
+/*************************************************************************
+* Function Name  : LCD_Num_walls
+* Description    : Draw the number of remaining walls of the two players
+* Input          : - num_walls_0: number of remaining walls for player0
+                   - num_walls_1: number of remaining walls for player1
+* Output         : None
+* Return         : None
+* Attention		 : None
+*************************************************************************/
 
-void LCD_Init_Board(volatile char players_pos[2][2]){
-	LCD_Clear(BACKGROUND);
-	LCD_Board(BOARD);
-	LCD_Token(players_pos[0][0],players_pos[0][1],0);
-	LCD_Token(players_pos[1][0],players_pos[1][1],1);
-}
-
-void LCD_Num_Walls(char num_walls_1, char num_walls_2){
+void LCD_Num_Walls(char num_walls_0, char num_walls_1){
 	char w1_in_char[1];
 	char w2_in_char[1];
-	sprintf(w1_in_char, "%1d", num_walls_1);
-	sprintf(w2_in_char, "%1d", num_walls_2);
-	GUI_Text(8, 275, (uint8_t *) "P1 Walls", BOARD,BACKGROUND);
-	GUI_Text(32, 292, (uint8_t *) w1_in_char, BOARD,BACKGROUND);
-	GUI_Text(168, 275, (uint8_t *) "P2 Walls", BOARD,BACKGROUND);
-	GUI_Text(198, 292, (uint8_t *) w2_in_char, BOARD,BACKGROUND);
+	sprintf(w1_in_char, "%1d", num_walls_0);
+	sprintf(w2_in_char, "%1d", num_walls_1);
+	GUI_Text(8, 275, (uint8_t *) "P0 Walls", TOKEN_1,BACKGROUND);
+	GUI_Text(32, 292, (uint8_t *) w1_in_char, TOKEN_1,BACKGROUND);
+	GUI_Text(168, 275, (uint8_t *) "P1 Walls", TOKEN_2,BACKGROUND);
+	GUI_Text(198, 292, (uint8_t *) w2_in_char, TOKEN_2,BACKGROUND);
 }
 
+
+/*************************************************************************
+* Function Name  : LCD_Possible_Shifts
+* Description    : Draw the token player in the lcd
+* Input          : - choice: indicate the selected shift
+                   - ps: the PossibleShifts struct that indicate which shifts are vlid
+                   - x: xpos of the player (index in the matrix [0,6]
+									 - y: ypos of the player (index in the matrix [0,6]
+                   - x2: xpos of the opponent (index in the matrix [0,6]
+									 - y2: ypos of the opponent (index in the matrix [0,6]
+									 - key: it is a value to understand the state of the token 
+* Output         : None
+* Return         : None
+* Attention		 : None
+*************************************************************************/
 
 void LCD_Possible_Shifts(char choice, volatile PossibleShifts ps, char x, char y,char x2, char y2, char key){
 	if (ps.up){
@@ -860,7 +952,77 @@ void LCD_Possible_Shifts(char choice, volatile PossibleShifts ps, char x, char y
 			}
 		}
 	}
+	if (ps.up_left){
+		if (choice==4){
+			LCD_Token(x-1,y-1,4);
+		}else{
+			LCD_Token(x-1,y-1,key);
+		}
+	}
+	if (ps.up_right){
+		if (choice==5){
+			LCD_Token(x+1,y-1,4);
+		}else{
+			LCD_Token(x+1,y-1,key);
+		}
+	}
+	if (ps.down_left){
+		if (choice==6){
+			LCD_Token(x-1,y+1,4);
+		}else{
+			LCD_Token(x-1,y+1,key);
+		}
+	}
+	if (ps.down_right){
+		if (choice==7){
+			LCD_Token(x+1,y+1,4);
+		}else{
+			LCD_Token(x+1,y+1,key);
+		}
+	}
 }
+
+// EXTRAPOINT2
+void LCD_Button(char x0,char y0,char x1,char y1,char msg[20],char selected){
+	if (selected){
+		if(SIMULATOR){
+			LCD_DrawSquare(x0,y0,x1,y1,BUTTON);
+			GUI_Text(x0 + 10, ((y0+y1)/2) - 8 , (uint8_t *) msg, BUTTON ,BACKGROUND);
+		}
+		else{
+			LCD_DrawSquare(x0,y0,x1,y1,TEXT);
+			LCD_Fill(x0+1,y0+1,x1-1,y1-1,BUTTON);
+			GUI_Text(x0 + 10, ((y0+y1)/2) - 8 , (uint8_t *) msg, TEXT,BUTTON);
+		}
+	}
+	else{
+		LCD_DrawSquare(x0,y0,x1,y1,TEXT);
+		if(SIMULATOR){
+			GUI_Text(x0 + 10, ((y0+y1)/2) - 8 , (uint8_t *) msg, TEXT,BACKGROUND);
+		}
+		else{
+			LCD_Fill(x0+1,y0+1,x1-1,y1-1,BACKGROUND);
+			GUI_Text(x0 + 10, ((y0+y1)/2) - 8 , (uint8_t *) msg, TEXT,BACKGROUND);
+		}
+	}
+	
+}
+
+void LCD_Current_Player(char idx){
+	if(idx==0){
+		GUI_Text(5,245, (uint8_t *) "Turn: Player 0",TOKEN_1,BACKGROUND);
+	}
+	else{
+		GUI_Text(5,245, (uint8_t *) "Turn: Player 1",TOKEN_2,BACKGROUND);
+	}
+	
+}
+void LCD_Time(char time){
+	char time_in_char[2];
+	sprintf(time_in_char, "%2d s", time);
+	GUI_Text(105, 292, (uint8_t *) time_in_char, BOARD, BACKGROUND);
+}
+
 
 
 

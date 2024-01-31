@@ -14,4 +14,8 @@ void joystick_player(char choice);
 void joystick_confirm(char choice);
 void joystick_confirm_wall(char x,char y,char orientation);
 
+//EXTRAPOINT2
+void select_button_mode(char button_id);
+void select_button_player(char button_id);
+
 

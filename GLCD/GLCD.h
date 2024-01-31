@@ -24,7 +24,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "LPC17xx.h"
-#include "../game/game.h"
+#include "../game.h"
 
 /* Private define ------------------------------------------------------------*/
 
@@ -96,22 +96,21 @@ void LCD_SetPoint(uint16_t Xpos,uint16_t Ypos,uint16_t point);
 void LCD_DrawLine( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1 , uint16_t color );
 void PutChar( uint16_t Xpos, uint16_t Ypos, uint8_t ASCI, uint16_t charColor, uint16_t bkColor );
 void GUI_Text(uint16_t Xpos, uint16_t Ypos, uint8_t *str,uint16_t Color, uint16_t bkColor);
-
-//my define
-#define DARK 0
+void delay_ms(uint16_t);
 
 
 #if DARK
 //DARK MODE
 #define BACKGROUND Black
-#define BOARD White
+#define BOARD Blue
 #define TOKEN_1 White
 #define TOKEN_2 Red
-#define WALL Blue
+#define WALL Orange
 #define VALID Green
 #define NOT_VALID Red
 #define POSSIBLE Yellow
 #define TEXT White
+#define BUTTON Red
 
 
 #else
@@ -125,18 +124,26 @@ void GUI_Text(uint16_t Xpos, uint16_t Ypos, uint8_t *str,uint16_t Color, uint16_
 #define NOT_VALID Red
 #define POSSIBLE Yellow
 #define TEXT Black
+#define BUTTON Blue
 
 #endif
-//my implementation
-void LCD_DrawSquare( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1 , uint16_t color );
-void LCD_Board(uint16_t color);
-void LCD_Token(uint16_t x, uint16_t y, char key);
-void LCD_Fill( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1 , uint16_t color );
-void LCD_DrawWall( uint16_t x, uint16_t y, char orientation,char key);
-void LCD_Init_Board(volatile char players_pos[2][2]);
-void LCD_Num_Walls(char player_1,char player_2);
 
+//my implementation extrapoint1
+void LCD_DrawSquare( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1 , uint16_t color );
+void LCD_Board(void);
+void LCD_Fill( uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1 , uint16_t color );
+void LCD_Token(uint16_t x, uint16_t y, char key);
+void LCD_Num_Walls(char player_1,char player_2);
+void LCD_Init_Board(volatile char players_pos[2][2]);
+void LCD_DrawWall( uint16_t x, uint16_t y, char orientation,char key);
 void LCD_Possible_Shifts(char choice, volatile PossibleShifts ps, char x, char y, char x2, char y2, char key);
+
+
+//my implementation extrapoint2
+void LCD_Button(char,char ,char, char, char[20],char);
+void LCD_Current_Player(char);
+void LCD_Time(char);
+	
 
 #endif 
 
